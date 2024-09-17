@@ -1,0 +1,43 @@
+<?php
+// 1. Conexión a la base de datos
+$servername = "localhost:3306";  // O el nombre de tu servidor MySQL
+$username = "root";         // Nombre de usuario de MySQL
+$password = "";             // Contraseña de MySQL (normalmente vacío en XAMPP)
+$dbname = "registro_db"; // Nombre de tu base de datos
+
+// Crear la conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar la conexión
+if ($conn->connect_error) {
+    die("Error en la conexión: " . $conn->connect_error);
+}
+
+// 2. Recibir los datos del formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $fecha = $_POST['fecha'];
+    $nombre = $_POST['nombre'];
+    $edad = $_POST['edad'];
+    $telefono = $_POST['telefono'];
+    $email = $_POST['email'];
+    $genero = $_POST['genero'];
+
+    // 3. Preparar la consulta SQL para insertar los datos
+    $sql = "INSERT INTO contactos (nombre, email, mensaje) VALUES (?, ?, ?)";
+
+    // Preparar y enlazar parámetros
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $nombre, $email, $mensaje);
+
+    // 4. Ejecutar la consulta y verificar si fue exitosa
+    if ($stmt->execute()) {
+        echo "Datos enviados correctamente.";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    // 5. Cerrar la conexión
+    $stmt->close();
+    $conn->close();
+}
+?>
